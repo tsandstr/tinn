@@ -97,8 +97,8 @@ int main() {
 	const int n_outputs{10};
 
 	const int n_hidden{28};
-	double rate{1.0f};
-	const double anneal{0.99f};
+	double rate{1.0};
+	const double anneal{0.99};
 
 	Data data{"semeion.data", n_inputs, n_outputs};
 

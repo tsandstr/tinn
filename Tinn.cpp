@@ -108,15 +108,15 @@ void Tinn::back_propogate(TinnState state, vector<double> input, vector<double> 
 }
 
 double activation(double x) {
-	return 1.0f / (1.0f + exp(-x));
+	return 1.0 / (1.0 + exp(-x));
 }
 
 double partial_activation(double x) {
-	return x * (1.0f - x);
+	return x * (1.0 - x);
 }
 
 double error(double target, double output) {
-	return 0.5f * pow(target - output, 2);
+	return 0.5 * pow(target - output, 2);
 }
 
 double partial_error(double target, double output) {
