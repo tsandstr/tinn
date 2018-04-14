@@ -3,6 +3,9 @@
 #include <cmath>
 #include <fstream>
 
+using std::vector;
+using std::string;
+
 Tinn::Tinn(int n_inputs, int n_hidden, int n_outputs) :
 	n_inputs{n_inputs},
 	n_hidden{n_hidden},
