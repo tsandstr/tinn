@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <string>
+#include <random>
+#include <chrono>
 
 using std::vector;
 using std::string;
@@ -13,13 +15,13 @@ public:
 	Tinn(int n_inputs, int n_hidden, int n_outputs);
 	Tinn(string path);
 
-	double train(vector<double> input, vector<double> target, double rate);
-	vector<double> predict(vector<double> input);
+	double train(const vector<double> &input, const vector<double> &target, double rate);
+	vector<double> predict(const vector<double> &input);
 
 	void save(string path);
 private:
-	TinnState forward_propogate(vector<double> input);
-	void back_propogate(TinnState state, vector<double> input, vector<double> target, double rate);
+	TinnState forward_propogate(const vector<double> &input);
+	void back_propogate(const TinnState &state, const vector<double> &input, const vector<double> &target, double rate);
 
 	double get_input_weight(int hidden, int input) const {
 		return weights[hidden * n_inputs + input];
@@ -34,6 +36,8 @@ private:
 		weights[output * n_hidden + hidden + n_hidden * n_inputs] = weight;
 	}
 
+	static std::uniform_real_distribution<double> distribution;
+	static std::default_random_engine generator;
 	void randomize_weights_biases();
 
 	int n_inputs, n_hidden, n_outputs;
@@ -44,7 +48,7 @@ private:
 
 struct TinnState {
 public:
-	TinnState(vector<double> hidden, vector<double> output) : hidden{hidden}, output{output} {}
+	TinnState(const vector<double> &hidden, const vector<double> &output) : hidden{hidden}, output{output} {}
 	double get_hidden(int n) const { return hidden[n]; }
 	double get_output(int n) const { return output[n]; }
 	vector<double> get_outputs() const { return output; }
@@ -56,4 +60,4 @@ double activation(double x);
 double partial_activation(double x);
 double error(double target, double output);
 double partial_error(double target, double output);
-double total_error(vector<double> target, vector<double> output);
+double total_error(const vector<double> &target, const vector<double> &output);

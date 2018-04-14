@@ -5,3 +5,4 @@
 tinn
 nn.py
 *.tinn
+compile_commands.json

@@ -1,7 +1,5 @@
 #include "Tinn.h"
 
-#include <random>
-#include <chrono>
 #include <cmath>
 #include <fstream>
 
@@ -33,13 +31,13 @@ Tinn::Tinn(std::string path) {
 	}
 }
 
-double Tinn::train(vector<double> input, vector<double> target, double rate) {
+double Tinn::train(const vector<double> &input, const vector<double> &target, double rate) {
 	TinnState state = forward_propogate(input);
 	back_propogate(state, input, target, rate);
 	return total_error(target, state.get_outputs());
 }
 
-vector<double> Tinn::predict(vector<double> input) {
+vector<double> Tinn::predict(const vector<double> &input) {
 	return forward_propogate(input).get_outputs();
 }
 
@@ -52,15 +50,15 @@ void Tinn::save(std::string path) {
 	for(int i = 0; i < (n_inputs + n_outputs) * n_hidden; i++) file << weights[i] << std::endl;
 }
 
-void Tinn::randomize_weights_biases() {
-	std::uniform_real_distribution<double> distribution{-0.5, 0.5};
-	std::default_random_engine generator{std::chrono::system_clock::now().time_since_epoch().count()};
+std::uniform_real_distribution<double> Tinn::distribution{-0.5, 0.5};
+std::default_random_engine Tinn::generator{std::chrono::system_clock::now().time_since_epoch().count()};
 
+void Tinn::randomize_weights_biases() {
 	for(double& w : weights) w = distribution(generator);
 	for(double& b : biases) b = distribution(generator);
 }
 
-TinnState Tinn::forward_propogate(vector<double> input) {
+TinnState Tinn::forward_propogate(const vector<double> &input) {
 	vector<double> hidden(n_hidden);
 	vector<double> output(n_outputs);
 
@@ -88,7 +86,7 @@ TinnState Tinn::forward_propogate(vector<double> input) {
 	return state;
 }
 
-void Tinn::back_propogate(TinnState state, vector<double> input, vector<double> target, double rate) {
+void Tinn::back_propogate(const TinnState &state, const vector<double> &input, const vector<double> &target, double rate) {
 	for(int i = 0; i < n_hidden; i++) {
 		double sum{0};
 
@@ -123,7 +121,7 @@ double partial_error(double target, double output) {
 	return target - output;
 }
 
-double total_error(vector<double> target, vector<double> output) {
+double total_error(const vector<double> &target, const vector<double> &output) {
 	double sum{0};
 	for(int i = 0; i < target.size(); i++)
 		sum += error(target[i], output[i]);
