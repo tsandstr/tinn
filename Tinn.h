@@ -55,6 +55,6 @@ private:
 
 double activation(double x);
 double partial_activation(double x);
-double error(double target, double output);
-double partial_error(double target, double output);
-double total_error(const std::vector<double> &target, const std::vector<double> &output);
+double error(double expected, double actual);
+double partial_error(double expected, double actual);
+double total_error(const std::vector<double> &expected, const std::vector<double> &actual);

@@ -116,18 +116,18 @@ double partial_activation(double x) {
 	return x * (1.0 - x);
 }
 
-double error(double target, double output) {
-	return 0.5 * pow(target - output, 2);
+double error(double expected, double actual) {
+	return 0.5 * pow(expected - actual, 2);
 }
 
-double partial_error(double target, double output) {
-	return target - output;
+double partial_error(double expected, double actual) {
+	return expected - actual;
 }
 
-double total_error(const vector<double> &target, const vector<double> &output) {
+double total_error(const vector<double> &expected, const vector<double> &actual) {
 	double sum{0};
-	for(int i = 0; i < target.size(); i++)
-		sum += error(target[i], output[i]);
+	for(int i = 0; i < expected.size(); i++)
+		sum += error(expected[i], actual[i]);
 	return sum;
 }
 
