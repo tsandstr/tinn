@@ -5,23 +5,20 @@
 #include <random>
 #include <chrono>
 
-using std::vector;
-using std::string;
-
 struct TinnState;
 
 class Tinn {
 public:
 	Tinn(int n_inputs, int n_hidden, int n_outputs);
-	Tinn(string path);
+	Tinn(std::string path);
 
-	double train(const vector<double> &input, const vector<double> &target, double rate);
-	vector<double> predict(const vector<double> &input);
+	double train(const std::vector<double> &input, const std::vector<double> &target, double rate);
+	std::vector<double> predict(const std::vector<double> &input);
 
-	void save(string path);
+	void save(std::string path);
 private:
-	TinnState forward_propogate(const vector<double> &input);
-	void back_propogate(const TinnState &state, const vector<double> &input, const vector<double> &target, double rate);
+	TinnState forward_propogate(const std::vector<double> &input);
+	void back_propogate(const TinnState &state, const std::vector<double> &input, const std::vector<double> &target, double rate);
 
 	double get_input_weight(int hidden, int input) const {
 		return weights[hidden * n_inputs + input];
@@ -43,21 +40,21 @@ private:
 	int n_inputs, n_hidden, n_outputs;
 	const static int n_biases = 2;
 
-	vector<double> weights, biases;
+	std::vector<double> weights, biases;
 };
 
 struct TinnState {
 public:
-	TinnState(const vector<double> &hidden, const vector<double> &output) : hidden{hidden}, output{output} {}
+	TinnState(const std::vector<double> &hidden, const std::vector<double> &output) : hidden{hidden}, output{output} {}
 	double get_hidden(int n) const { return hidden[n]; }
 	double get_output(int n) const { return output[n]; }
-	vector<double> get_outputs() const { return output; }
+	std::vector<double> get_outputs() const { return output; }
 private:
-	vector<double> hidden, output;
+	std::vector<double> hidden, output;
 };
 
 double activation(double x);
 double partial_activation(double x);
 double error(double target, double output);
 double partial_error(double target, double output);
-double total_error(const vector<double> &target, const vector<double> &output);
+double total_error(const std::vector<double> &target, const std::vector<double> &output);
