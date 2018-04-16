@@ -1,7 +1,7 @@
 # Makefile with support for Windows (mingw32) and NIX (clang / gcc)
 
 CC=g++
-CFLAGS=-c
+CFLAGS=-c -Wall
 LDFLAGS=
 SOURCES=test.cpp Tinn.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
