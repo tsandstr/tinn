@@ -109,7 +109,7 @@ void Tinn::back_propogate(const TinnState &state, const vector<double> &input, c
 }
 
 double activation(double x) {
-	return 1.0 / (1.0 + exp(-x));
+	return 1.0 / (1.0 + std::exp(-x));
 }
 
 double partial_activation(double x) {
@@ -117,7 +117,7 @@ double partial_activation(double x) {
 }
 
 double error(double expected, double actual) {
-	return 0.5 * pow(expected - actual, 2);
+	return 0.5 * std::pow(expected - actual, 2);
 }
 
 double partial_error(double expected, double actual) {
