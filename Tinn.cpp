@@ -139,9 +139,7 @@ double total_error(const vector<double> &expected, const vector<double> &actual)
 	if(expected.size() != actual.size())
 		throw std::range_error("Expected and actual different sizes");
 
-	double sum = std::inner_product(expected.begin(), expected.end(), actual.begin(), 0.0,
+	return std::inner_product(expected.begin(), expected.end(), actual.begin(), 0.0,
 			std::plus<>(), [](double ex, double ac) { return error(ex, ac); });
-
-	return sum;
 }
 
