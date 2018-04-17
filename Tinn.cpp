@@ -2,6 +2,11 @@
 
 #include <cmath>
 #include <fstream>
+#include <algorithm>
+#include <numeric>
+#include <functional>
+
+#include <iostream>
 
 using std::vector;
 using std::string;
@@ -12,6 +17,11 @@ Tinn::Tinn(int n_inputs, int n_hidden, int n_outputs) :
 	n_outputs{n_outputs} {
 	weights.reserve((n_inputs + n_outputs) * n_hidden);
 	biases.reserve(2);
+
+	std::random_device rd;
+	generator = std::default_random_engine(rd());
+	distribution = std::uniform_real_distribution<double>(-0.5, 0.5);
+
 	randomize_weights_biases();
 }
 
@@ -21,6 +31,10 @@ Tinn::Tinn(std::string path) {
 	
 	weights.reserve((n_inputs + n_outputs) * n_hidden);
 	biases.reserve(2);
+
+	std::random_device rd;
+	generator = std::default_random_engine(rd());
+	distribution = std::uniform_real_distribution<double>(-0.5, 0.5);
 
 	for(int i = 0; i < n_biases; i++) {
 		double temp;
@@ -52,9 +66,6 @@ void Tinn::save(std::string path) {
 	for(int i = 0; i < n_biases; i++) file << biases[i] << std::endl;
 	for(int i = 0; i < (n_inputs + n_outputs) * n_hidden; i++) file << weights[i] << std::endl;
 }
-
-std::uniform_real_distribution<double> Tinn::distribution{-0.5, 0.5};
-std::default_random_engine Tinn::generator{std::chrono::system_clock::now().time_since_epoch().count()};
 
 void Tinn::randomize_weights_biases() {
 	for(double& w : weights) w = distribution(generator);
@@ -117,7 +128,7 @@ double partial_activation(double x) {
 }
 
 double error(double expected, double actual) {
-	return 0.5 * std::pow(expected - actual, 2);
+	return 0.5 * std::pow(expected - actual, 2.0);
 }
 
 double partial_error(double expected, double actual) {
@@ -125,9 +136,12 @@ double partial_error(double expected, double actual) {
 }
 
 double total_error(const vector<double> &expected, const vector<double> &actual) {
-	double sum{0};
-	for(int i = 0; i < expected.size(); i++)
-		sum += error(expected[i], actual[i]);
+	if(expected.size() != actual.size())
+		throw std::range_error("Expected and actual different sizes");
+
+	double sum = std::inner_product(expected.begin(), expected.end(), actual.begin(), 0.0,
+			std::plus<>(), [](double ex, double ac) { return error(ex, ac); });
+
 	return sum;
 }
 

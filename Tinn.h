@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <random>
-#include <chrono>
 
 struct TinnState;
 
@@ -33,8 +32,8 @@ private:
 		weights[output * n_hidden + hidden + n_hidden * n_inputs] = weight;
 	}
 
-	static std::uniform_real_distribution<double> distribution;
-	static std::default_random_engine generator;
+	std::uniform_real_distribution<double> distribution;
+	std::default_random_engine generator;
 	void randomize_weights_biases();
 
 	int n_inputs, n_hidden, n_outputs;
