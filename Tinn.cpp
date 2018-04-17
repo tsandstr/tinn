@@ -108,13 +108,15 @@ void Tinn::back_propogate(const TinnState &state, const vector<double> &input, c
 			double a{partial_error(state.get_output(j), target[j])};
 			double b{partial_activation(state.get_output(j))};
 
+			double delta = -1.0 * rate * a * b * state.get_hidden(i);
+
 			sum += a * b * get_hidden_weight(j, i);
-			set_hidden_weight(j, i, get_hidden_weight(j, i) - rate * a * b * state.get_hidden(i));
+			set_hidden_weight(j, i, get_hidden_weight(j, i) + delta);
 		}
 
 		for(int j = 0; j < n_inputs; j++) {
-			double delta = rate * sum * partial_activation(state.get_hidden(i)) * input[j];
-			set_input_weight(i, j, get_input_weight(i, j) - delta);
+			double delta = -1.0 * rate * sum * partial_activation(state.get_hidden(i)) * input[j];
+			set_input_weight(i, j, get_input_weight(i, j) + delta);
 		}
 	}
 }
