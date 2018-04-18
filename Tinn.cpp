@@ -134,7 +134,7 @@ double partial_activation(double x) {
 }
 
 double error(double expected, double actual) {
-	return 0.5 * std::pow(expected - actual, 2.0);
+	return 0.5 * (expected - actual) * (expected-actual);
 }
 
 double partial_error(double expected, double actual) {

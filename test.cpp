@@ -25,7 +25,7 @@ public:
 private:
 	void parse(string line, int row);
 
-	vector<vector<double>> inputs, targets;
+	vector<vector<double> > inputs, targets;
 	int n_inputs, n_outputs, n_rows;
 };
 
@@ -84,9 +84,6 @@ void Data::parse(string line, int row) {
 }
 
 void Data::shuffle() {
-	/* std::uniform_int_distribution<int> distribution{0, n_rows - 1};
-	std::default_random_engine generator{std::chrono::system_clock::now().time_since_epoch().count()}; */
-
 	std::uniform_int_distribution<int> distribution{0, n_rows-1};
 
 	for(int row = 0; row < n_rows; row++) {
@@ -131,7 +128,7 @@ int main() {
 	}
 
 	tinn.save("saved.tinn");
-	Tinn loaded{"saved.tinn"};
+	Tinn loaded{"savedtest.tinn"};
 
 	vector<double> input = data.get_input(0);
 	vector<double> target = data.get_target(0);
@@ -140,3 +137,4 @@ int main() {
 	for(auto i = target.begin(); i != target.end(); i++) { std::cout << std::fixed << *i << " "; } std::cout << std::endl;
 	for(auto i = prediction.begin(); i != prediction.end(); i++) { std::cout << std::fixed << *i << " "; } std::cout << std::endl;
 }
+
