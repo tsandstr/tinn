@@ -6,8 +6,6 @@
 #include <numeric>
 #include <functional>
 
-#include <iostream>
-
 using std::vector;
 using std::string;
 
