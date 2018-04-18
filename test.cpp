@@ -9,6 +9,9 @@
 using std::vector;
 using std::string;
 
+std::random_device rd;
+std::default_random_engine generator{rd()};
+
 struct Data {
 public:
 	Data(string path, int n_inputs, int n_outputs);
@@ -81,9 +84,10 @@ void Data::parse(string line, int row) {
 }
 
 void Data::shuffle() {
-	std::uniform_int_distribution<int> distribution{0, n_rows - 1};
-	std::default_random_engine generator{std::chrono::system_clock::now().time_since_epoch().count()};
-	// std::default_random_engine generator{0};
+	/* std::uniform_int_distribution<int> distribution{0, n_rows - 1};
+	std::default_random_engine generator{std::chrono::system_clock::now().time_since_epoch().count()}; */
+
+	std::uniform_int_distribution<int> distribution{0, n_rows-1};
 
 	for(int row = 0; row < n_rows; row++) {
 		int swap = distribution(generator);

@@ -19,27 +19,17 @@ private:
 	TinnState forward_propogate(const std::vector<double> &input);
 	void back_propogate(const TinnState &state, const std::vector<double> &input, const std::vector<double> &target, double rate);
 
-	double get_input_weight(int hidden, int input) const {
-		return weights[hidden * n_inputs + input];
-	}
-	double get_hidden_weight(int output, int hidden) const {
-		return weights[output * n_hidden + hidden + n_hidden * n_inputs];
-	}
-	void set_input_weight(int hidden, int input, double weight) {
-		weights[hidden * n_inputs + input] = weight;
-	}
-	void set_hidden_weight(int output, int hidden, double weight) {
-		weights[output * n_hidden + hidden + n_hidden * n_inputs] = weight;
-	}
-
 	std::uniform_real_distribution<double> distribution;
 	std::default_random_engine generator;
 	void randomize_weights_biases();
 
+	int input_weight_index(int input, int hidden) { return hidden * n_inputs + input; }
+	int hidden_weight_index(int hidden, int output) { return output * n_hidden + hidden; }
+
 	int n_inputs, n_hidden, n_outputs;
 	const static int n_biases = 2;
 
-	std::vector<double> weights, biases;
+	std::vector<double> input_weights, hidden_weights, biases;
 };
 
 struct TinnState {

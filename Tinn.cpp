@@ -13,7 +13,8 @@ Tinn::Tinn(int n_inputs, int n_hidden, int n_outputs) :
 	n_inputs{n_inputs},
 	n_hidden{n_hidden},
 	n_outputs{n_outputs} {
-	weights.reserve((n_inputs + n_outputs) * n_hidden);
+	input_weights.reserve(n_inputs * n_hidden);
+	hidden_weights.reserve(n_hidden * n_outputs);
 	biases.reserve(2);
 
 	std::random_device rd;
@@ -27,7 +28,8 @@ Tinn::Tinn(std::string path) {
 	std::ifstream file{path};
 	file >> n_inputs >> n_hidden >> n_outputs;
 	
-	weights.reserve((n_inputs + n_outputs) * n_hidden);
+	input_weights.reserve(n_inputs * n_hidden);
+	hidden_weights.reserve(n_hidden * n_outputs);
 	biases.reserve(2);
 
 	std::random_device rd;
@@ -39,10 +41,15 @@ Tinn::Tinn(std::string path) {
 		file >> temp;
 		biases.push_back(temp);
 	}
-	for(int i = 0; i < (n_inputs + n_outputs) * n_hidden; i++) {
+	for(int i = 0; i < n_inputs * n_hidden; i++) {
 		double temp;
 		file >> temp;
-		weights.push_back(temp);
+		input_weights.push_back(temp);
+	}
+	for(int i = 0; i < n_hidden * n_outputs; i++) {
+		double temp;
+		file >> temp;
+		hidden_weights.push_back(temp);
 	}
 }
 
@@ -62,11 +69,13 @@ void Tinn::save(std::string path) {
 	file << n_inputs << " " << n_hidden << " " << n_outputs << std::endl;
 
 	for(int i = 0; i < n_biases; i++) file << biases[i] << std::endl;
-	for(int i = 0; i < (n_inputs + n_outputs) * n_hidden; i++) file << weights[i] << std::endl;
+	for(int i = 0; i < n_inputs * n_hidden; i++) file << input_weights[i] << std::endl;
+	for(int i = 0; i < n_hidden * n_outputs; i++) file << hidden_weights[i] << std::endl;
 }
 
 void Tinn::randomize_weights_biases() {
-	for(double& w : weights) w = distribution(generator);
+	for(double& w : input_weights) w = distribution(generator);
+	for(double& w : hidden_weights) w = distribution(generator);
 	for(double& b : biases) b = distribution(generator);
 }
 
@@ -78,7 +87,7 @@ TinnState Tinn::forward_propogate(const vector<double> &input) {
 		double sum{0};
 
 		for(int j = 0; j < n_inputs; j++) {
-			sum += input[j] * get_input_weight(i, j);
+			sum += input[j] * input_weights[input_weight_index(j, i)];
 		}
 		
 		hidden[i] = activation(sum + biases[0]);
@@ -88,7 +97,7 @@ TinnState Tinn::forward_propogate(const vector<double> &input) {
 		double sum{0};
 
 		for(int j = 0; j < n_hidden; j++) {
-			sum+= hidden[j] * get_hidden_weight(i, j);
+			sum+= hidden[j] * hidden_weights[hidden_weight_index(j, i)];
 		}
 
 		output[i] = activation(sum + biases[1]);
@@ -106,15 +115,12 @@ void Tinn::back_propogate(const TinnState &state, const vector<double> &input, c
 			double a{partial_error(state.get_output(j), target[j])};
 			double b{partial_activation(state.get_output(j))};
 
-			double delta = -1.0 * rate * a * b * state.get_hidden(i);
-
-			sum += a * b * get_hidden_weight(j, i);
-			set_hidden_weight(j, i, get_hidden_weight(j, i) + delta);
+			sum += a * b * hidden_weights[hidden_weight_index(i,j)];
+			hidden_weights[hidden_weight_index(i, j)] -= rate * a * b * state.get_hidden(i);
 		}
 
 		for(int j = 0; j < n_inputs; j++) {
-			double delta = -1.0 * rate * sum * partial_activation(state.get_hidden(i)) * input[j];
-			set_input_weight(i, j, get_input_weight(i, j) + delta);
+			input_weights[input_weight_index(j, i)] -= rate * sum * partial_activation(state.get_hidden(i)) * input[j];
 		}
 	}
 }
